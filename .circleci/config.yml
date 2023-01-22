@@ -62,7 +62,7 @@ jobs:
             else
               return 1
             fi
-      - destroy_env
+      - destroy_env:
           when: on_fail
 
               
