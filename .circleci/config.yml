@@ -10,9 +10,10 @@ commands:
     steps:
       - run:
         name: Destroy Env
-        command: | 
-          aws cloudformation delete-stack --stack-name mystack-${CIRCLE_WORKFLOW_ID:0:5}
-
+        when: on_fail
+        command: |
+          aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
+          
 jobs:
   # create_infrastructure: 
   #   docker:
@@ -62,8 +63,7 @@ jobs:
             else
               return 1
             fi
-      - destroy_env:
-          when: on_fail
+      - destroy_env
 
               
 # Sequential workflow
