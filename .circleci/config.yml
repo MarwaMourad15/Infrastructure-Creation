@@ -5,6 +5,14 @@ orbs:
   # welcome: circleci/welcome-orb@0.4.1
   # aws-cli: circleci/aws-cli@2.0.3
 # Define the jobs we want to run for this project
+commands:
+  destroy_env:
+    steps:
+      - run:
+        name: Destroy Env
+        command: | 
+          aws cloudformation delete-stack --stack-name mystack-${CIRCLE_WORKFLOW_ID:0:5}
+
 jobs:
   # create_infrastructure: 
   #   docker:
@@ -46,7 +54,7 @@ jobs:
       - run:
           name: smoke test
           command: |
-            URL="https://blog.udacityyyyy.com/"
+            URL="https://blog.udacityyyyyy.com/"
             # Test if website exists
             if curl -s --head ${URL} 
             then
@@ -54,6 +62,9 @@ jobs:
             else
               return 1
             fi
+      - destroy_env
+        when: on_fail
+
               
 # Sequential workflow
 workflows:
