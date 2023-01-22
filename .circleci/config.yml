@@ -63,7 +63,7 @@ jobs:
               return 1
             fi
       - destroy_env
-        when: on_fail
+          when: on_fail
 
               
 # Sequential workflow
