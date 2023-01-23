@@ -27,7 +27,7 @@ jobs:
               --template-file template.yml \
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
               --region us-east-1
-      - destroy_environment        
+      #- destroy_env        
 
   # configure_infrastructure:
   #   docker:
