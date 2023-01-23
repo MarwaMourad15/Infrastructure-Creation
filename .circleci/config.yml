@@ -15,19 +15,34 @@ commands:
             aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
           
 jobs:
-  create_infrastructure: 
+  # create_infrastructure: 
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Create Cloudformation Stack
+  #         command: |
+  #           aws cloudformation deploy \
+  #             --template-file template.yml \
+  #             --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+  #             --region us-east-1
+  #     - destroy_env       
+
+  create_cloudfront: 
     docker:
       - image: amazon/aws-cli
     steps:
       - checkout
       - run:
-          name: Create Cloudformation Stack
+          name: Create Cloudformation Stack using cloudfront
           command: |
             aws cloudformation deploy \
-              --template-file template.yml \
-              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
-              --region us-east-1
-      #- destroy_env        
+            --template-file cloudfront.yml \
+            --stack-name production-distro \
+            --parameter-overrides PipelineID="mybucket-237289736665" \ # Name of the S3 bucket you created manually.
+            --tags project=udapeople &
+      - destroy_env     
 
   # configure_infrastructure:
   #   docker:
@@ -48,23 +63,47 @@ jobs:
   #           # Your command
   #           ansible-playbook -i inventory main.yml
 
-  smoke_test:
-    docker:
-      - image: alpine:latest
-    steps:
-      - run: apk add --update curl
-      - run:
-          name: smoke test
-          command: |
-            URL="https://blog.udacityyyyyy.com/"
-            # Test if website exists
-            if curl -s --head ${URL} 
-            then
-              return 0
-            else
-              return 1
-            fi
-      - destroy_env
+  # tt:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: ttest
+  #         command: | 
+  #           aws cloudformation deploy \
+  #           --template-file bucket.yml \
+  #           --stack-name "${CIRCLE_WORKFLOW_ID}" \
+  #           --parameter-overrides NAME="${CIRCLE_WORKFLOW_ID}"
+  #     - run:
+  #         name: test2
+  #         command: |
+  #           aws s3 sync . s3://"${CIRCLE_WORKFLOW_ID}" --delete
+  #     - run:
+  #         name: test3
+  #         command: |
+  #           aws cloudformation deploy \
+  #           --template-file cloudfront.yml \
+  #           --stack-name cloudfront \
+  #           --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID}"
+
+  # smoke_test:
+  #   docker:
+  #     - image: alpine:latest
+  #   steps:
+  #     - run: apk add --update curl
+  #     - run:
+  #         name: smoke test
+  #         command: |
+  #           URL="https://blog.udacityyyyyy.com/"
+  #           # Test if website exists
+  #           if curl -s --head ${URL} 
+  #           then
+  #             return 0
+  #           else
+  #             return 1
+  #           fi
+  #     - destroy_env
 
               
 # Sequential workflow
@@ -72,8 +111,9 @@ workflows:
   # Name the workflow
   myWorkflow:
     jobs:
-      - create_infrastructure
+      - create_cloudfront
+      #- create_infrastructure
       #- configure_infrastructure
-      - smoke_test:
-          requires: [create_infrastructure]
+      # - smoke_test:
+      #     requires: [create_infrastructure]
           
