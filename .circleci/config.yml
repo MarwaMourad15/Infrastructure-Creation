@@ -40,6 +40,7 @@ jobs:
             aws cloudformation deploy \
             --template-file cloudfront.yml \
             --stack-name production-distro \
+            --region us-east-1 \
             --parameter-overrides PipelineID="mybucket-237289736665" \
             --tags project=udapeople &
       - destroy_env     
