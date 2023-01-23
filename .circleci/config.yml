@@ -15,18 +15,18 @@ commands:
           aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
           
 jobs:
-  # create_infrastructure: 
-  #   docker:
-  #     - image: amazon/aws-cli
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: Create Cloudformation Stack
-  #         command: |
-  #           aws cloudformation deploy \
-  #             --template-file template.yml \
-  #             --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
-  #             --region us-east-1
+  create_infrastructure: 
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Create Cloudformation Stack
+          command: |
+            aws cloudformation deploy \
+              --template-file template.yml \
+              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+              --region us-east-1
 
   # configure_infrastructure:
   #   docker:
@@ -71,6 +71,6 @@ workflows:
   # Name the workflow
   myWorkflow:
     jobs:
-      #- create_infrastructure
+      - create_infrastructure
       #- configure_infrastructure
       - smoke_test
